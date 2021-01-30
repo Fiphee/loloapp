@@ -2498,7 +2498,7 @@ class CreateEntry(Screen):
 
         entry_folder = join(ENTRIES_FOLDER, f'{entry_n}')
         images_folder = join(entry_folder, 'images')
-        thumbnails_folder = join(image_folder, 'thumbs')
+        thumbnails_folder = join(images_folder, 'thumbs')
         
         # create folders for the entry
         if not self.edit:
