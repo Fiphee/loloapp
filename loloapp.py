@@ -1587,7 +1587,8 @@ class Test(BoxLayout):
         self.date_picked = date_picked
         self.priority = priority
         self.days = days
-        self.priority_select = {1:(572,407.5),2:(629, 407.5),3:(685, 407.5),4:(742, 407.5)}
+        self.priority_select_height = 405.5
+        self.priority_select = {1:(572,self.priority_select_height),2:(629, self.priority_select_height),3:(685, self.priority_select_height),4:(742, self.priority_select_height)}
         box = StackLayout(orientation='tb-lr',spacing=10)
         btns = BoxLayout(size_hint_y=None, height=50)
         cancel_btn = Button(text='Cancel',on_press=lambda x: self.cancel(),size_hint_y=1)
@@ -1689,13 +1690,13 @@ class Test(BoxLayout):
     def selected_priority(self, n):
         self.priority = n
         if n == 1:
-            self.selection.pos = (572,407.5)
+            self.selection.pos = (572,self.priority_select_height)
         elif n == 2:
-            self.selection.pos = (629, 407.5)
+            self.selection.pos = (629, self.priority_select_height)
         elif n == 3:
-            self.selection.pos = (685, 407.5)
+            self.selection.pos = (685, self.priority_select_height)
         elif n == 4:
-            self.selection.pos = (742, 407.5)
+            self.selection.pos = (742, self.priority_select_height)
 
     def selected_habit_day(self, btn):
         if btn.background_color == [0.7, 0.7, 0.7, 1]:
