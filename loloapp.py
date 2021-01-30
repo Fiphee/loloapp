@@ -2443,9 +2443,11 @@ class CreateEntry(Screen):
 
     def on_leave(self):
         shutil.rmtree(TEST_FOLDER)
-        if self.edit:
-            MANAGER.remove_widget(self)
-            del(self)
+        MANAGER.remove_widget(self)
+        if not self.edit:
+            MANAGER.add_widget(CreateEntry(name='create_entry'))
+        del(self)
+        
 
     def on_enter(self):
         if not isdir(TEST_FOLDER):
@@ -2767,6 +2769,7 @@ class ImageHandler():
             new_path = join(TEST_IMAGES, self.get_filename(self.img_path))
             image.save(new_path)
             self.image_path = new_path            
+            self.name = self.get_filename(self.image_path) 
         self._make_thumbnail(self.img_path, save=save)
         image.close()
 
