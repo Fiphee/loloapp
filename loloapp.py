@@ -40,6 +40,7 @@ import shutil
 from time import ctime
 from PIL import Image as pil_img
 import os
+import ntpath
 import re
 
 data_dir = App().user_data_dir
@@ -2668,8 +2669,8 @@ class ImageButton(Button):
         self.disabled = False
 
     def get_name(self, pth):
-        name = pth.split('\\')[-1]
-        return name
+        head, tail = ntpath.split(pth)
+        return tail or ntpath.basename(head)
 
 
 class ImageBox(StackLayout):
@@ -2785,7 +2786,9 @@ class ImageHandler():
 
     def _get_thumb(self, img_path, indx=None):
         if indx == None:
-            name = img_path.split('\\')[-1]
+            head, name = ntpath.split(img_path)
+            if not name:
+                name = ntpath.basename(head)
         else:
             name = str(indx) + '.png'
         thumbname = '-thumb-' + name
@@ -2809,11 +2812,8 @@ class ImageHandler():
 
 
     def get_filename(self, pth):
-        pth = pth.split('\\')
-        name = pth[-1]
-        del pth
-        self.name = name
-        return name
+        head, tail = ntpath.split(pth)
+        return tail or ntpath.basename(head)
 
 
 class SelectorImage(Button):
