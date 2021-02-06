@@ -1,0 +1,825 @@
+<SideNav>:                                                    # Sidenav
+    id: sidenav
+    size_hint: .15, 1
+    orientation: 'tb-lr'
+    # Profile name, profile picture perhaps
+    spacing: 5
+    Label: #spacer
+        size_hint: 1,.03
+
+    BoxLayout:                                                  # Profile info box
+        id: profile_info_box
+        size_hint: 1,.3
+        orientation: 'vertical'
+        spacing: 10
+        MDLabel:
+            text: app.username
+            padding: 10,10
+            size_hint: 1,.15
+            halign: 'center'
+            font_size: '30px'
+        Image:
+            source: app.profile_pic
+            size_hint_y: None
+            width: 100
+            allow_strech: False
+
+        # Button:
+        #     id: profile_picture_btn
+        #     size_hint: 1,.7
+        #     background_down: ''
+        #     background_normal: app.profile_pic
+        #     on_press: app.m.scr_one.debug()
+
+        RoundedCutButton:
+            id: edit_profile
+            text: 'Change Name'
+            size_hint:1,.1      
+            on_press: app.change_name()    
+
+    RoundedButton:                                                     # Home Btn
+        id: milestones_btn
+        text: 'Home'
+        size_hint: 1,.05
+        on_press:
+            app.m.current = 'scr_one'
+
+    RoundedButton:                                                     # Milestones Btn
+        id: milestones_btn
+        text: 'Milestones'
+        size_hint: 1,.05
+        on_press:
+            app.m.current = 'milestones'
+
+    RoundedButton:                                                     # Diary Btn
+        id: diary_btn
+        text: 'Diary'
+        size_hint: 1,.05
+        on_press:
+            app.m.current = 'diary'
+
+<RoundedButton@Button>:
+    background_color: 0,0,0,0
+    canvas.before:
+        Color:
+            rgba:(.3,.3,.3,1)
+        RoundedRectangle:
+            size:self.size
+            pos:self.pos
+            radius: [18]
+
+<RoundedCutButton@Button>:
+    background_color: 0,0,0,0
+    canvas.before:
+        StencilPush
+        RoundedRectangle:
+            size: self.size[0] -2, self.size[1]-2
+            pos: self.pos[0] + 1, self.pos[1] + 1
+            radius: [17]
+        StencilUse
+        Color:
+            rgba:(.3,.3,.3,1)
+        RoundedRectangle:
+            size:self.size
+            pos:self.pos
+            radius: [18]
+        StencilUnUse
+
+        RoundedRectangle:
+            size: self.size[0] -2, self.size[1]-2
+            pos: self.pos[0] + 1, self.pos[1] + 1
+            radius: [17]
+        StencilPop
+            
+<Mypop>:
+    snackbar_x: "20dp"
+    snackbar_y: "20dp"
+    size_hint_x: .6
+    pos_hint: {"center_x":.7}
+    duration: 4
+
+<ArchivedMilestoneButton>:
+    background_disabled_normal: '' 
+    disabled_color: root.disabled_t
+
+<ObjSwitch>:
+    on_active:
+        root.switch()
+
+<MyIconButton>:
+    canvas.before:
+        Color: 
+            rgba: root.c
+        Rectangle:
+            size: self.size[0],self.size[0]+2
+            pos: self.pos
+    theme_text_color: 'Custom'
+    text_color: root.disabled_t
+
+<MileDrop>:
+    b1: b1
+    b2: b2
+    canvas.before:
+        Color:
+            rgba: .5,.5,.5,1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    # obj_name: obj_name
+    # Label:
+    #     id: obj_name
+    #     text: ''
+    #     size_hint: 1,.25
+    Button:
+        id: b1
+        text: 'Change Reward'
+        size_hint: 1,.5   
+        on_press:
+            root.change_reward()
+    Button:
+        id: b2
+        text: 'Cancel'
+        size_hint: 1,.5
+        on_press:
+            root.cancel()
+
+<DropdownClick>:
+    b1: b1
+    b2: b2
+    b3: b3
+    canvas.before:
+        Color:
+            rgba: .5,.5,.5,1
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    obj_name: obj_name
+    Label:
+        id: obj_name
+        text: ''
+        size_hint: 1,.25
+    Button:
+        id: b1
+        text: ' Edit '
+        size_hint: 1,.25    
+        on_press:
+            root.edit()  
+    Button:
+        id: b2
+        text: 'Delete'
+        size_hint: 1,.25
+        on_press:
+            root.delete()
+    Button:
+        id: b3
+        text: 'Cancel'
+        size_hint: 1,.25
+        on_press:
+            root.cancel()
+
+<ScreenOne>:
+    habits_layout: habits_layout
+    objectives_layout: objectives_layout
+    
+    BoxLayout:                                                          # main container
+        id: main_container
+        orientation: 'horizontal'
+        spacing: 5
+        padding: 5,0,0,0
+        SideNav:
+        
+        BoxLayout:
+            canvas.before:
+                Color:
+                    rgba: .7,.7,.7,1
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+
+            id: main_layout
+            size_hint: .85, 1
+            FloatLayout:                                                # float layout for main screen
+                size_hint: 1,1
+                # EffectWidget:
+                #     size_hint: .5,.05
+                #     FXAAEffect:
+                #     RoundedButton:
+                #         text: 'Testin'
+
+                BoxLayout:                                              # Objective layout
+                    canvas.before:
+                        Color:
+                            rgba: root.obj_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+
+                    # id: objectives_layout
+                    orientation: 'vertical'
+                    size_hint: None,None
+                    size: 400,550
+                    pos_hint: {'x':.05, 'y':.1}
+                    BoxLayout:
+                        padding: 15,0,15,0
+                        pos_hint: {'top':1}
+                        size_hint: 1,.1
+                        Label:
+                            text: "Today's Objectives"
+                            font_size: '30px'
+                        MDIconButton:
+                            id: create_objective_btn
+                            theme_text_color: 'Custom'
+                            text_color: 1,1,1,1
+                            pos_hint: {'center_y':.46}
+                            icon: 'plus-circle'
+                            user_font_size: '32sp'
+                            on_press:
+                                root.create_objective()
+                    ScrollView:
+                        size_hint: 1, .85
+                        StackLayout:
+                            size_hint_y: None
+                            height: self.minimum_height
+                            id: objectives_layout
+
+                BoxLayout:                                              # Habits layout
+                    canvas.before:
+                        Color:
+                            rgba: root.obj_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    orientation: 'vertical'
+                    size_hint: None,None
+                    size: 400,550
+                    pos_hint: {'x':.5, 'y':.1}
+                    BoxLayout:
+                        padding: 15,0,15,0
+                        pos_hint: {'top':1}
+                        size_hint: 1,.1
+                        Label:
+                            text: "Habits"
+                            font_size: '30px'
+                        MDIconButton:
+                            id: create_habit_btn
+                            theme_text_color: 'Custom'
+                            text_color: 1,1,1,1
+                            pos_hint: {'center_y':.46}
+                            icon: 'plus-circle'
+                            user_font_size: '32sp'
+                            on_press:
+                                root.create_objective(habit=True)
+                    ScrollView:
+                        size_hint: 1, .85
+                        StackLayout:
+                            size_hint_y: None
+                            height: self.minimum_height
+                            id: habits_layout
+
+######################################################################################################################
+################################################### DIARY ############################################################
+######################################################################################################################
+
+<DiaryEntry>:
+    btn: btn
+    size_hint_y: None
+    height: self.minimum_height
+    Button:
+        id: btn
+        size_hint: .8,None
+        height: 50
+        text: ''
+        halign: 'left'
+        font_size: 18
+        text_size: self.size[0]-25,25
+    MDIconButton:
+        id: edit
+        icon:'file-document-edit'
+        size_hint_y: None
+        size: 50,50
+        on_press: 
+            root.edit_entry()
+
+    MDIconButton:
+        id: delete
+        icon: 'close'
+        size_hint_y: None
+        size: 50,50
+        on_press:
+            root.delete()
+
+# <SearchTags>:
+
+<Diary>:
+    diary_list: diary_list
+    search_area: search_area
+    search_box: search_box
+    
+    BoxLayout:                                                          
+        id: main_container
+        orientation: 'horizontal'
+        spacing: 5
+        padding: 5,0,0,0
+        SideNav:
+        BoxLayout:                                                      # Diary Layout
+            canvas.before:
+                Color:
+                    rgba: .7,.7,.7,1
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+
+            id: main_layout
+            size_hint: .85, 1
+            FloatLayout:                                                # float layout for main screen
+                size_hint: 1,1
+                BoxLayout:                                              # main layout
+                    canvas.before:
+                        Color:
+                            rgba: root.obj_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+
+                    # id: objectives_layout
+                    orientation: 'vertical'
+                    size_hint: .96,None
+                    size: 950,600
+                    pos_hint: {'x':.02, 'y':.035}
+                    BoxLayout:
+                        orientation:'vertical'
+                        BoxLayout:
+                            canvas.before:
+                                Color:
+                                    rgba: .4,.4,.4,1
+                                Rectangle:
+                                    size: self.size
+                                    pos: self.pos
+
+                            id: top_bar
+                            size_hint: 1,.15
+                            MDIconButton:
+                                icon: 'plus-circle'
+                                user_font_size: '64sp'
+                                theme_text_color: 'Custom'
+                                text_color: 1,1,1,1
+                                on_press:
+                                    app.m.current = 'create_entry'
+                            BoxLayout:    
+                                BoxLayout:
+                                    padding: 0,5,0,0
+                                    id: search_area
+                                    orientation: 'vertical'
+                                    TextInput:
+                                        id: search_box
+                                        size_hint: 1,1
+                                        multiline: False
+                                        
+                                    # SearchTags:
+                                    #     size_hint: 1,.1
+ 
+                                MDIconButton:
+                                    icon:'magnify'
+                                    size_hint: None,None
+                                    height: 80
+                                    width: 80
+                                    theme_text_color: 'Custom'
+                                    text_color: 1,1,1,1
+                                    on_press: root.search()
+                        
+                        ScrollView:
+                            size_hint: 1, .85
+                            StackLayout:
+                                padding: 0,2,0,0
+                                size_hint_y: None
+                                height: self.minimum_height
+                                spacing: 1.5
+                                id: diary_list
+                        Button:
+                            text: 'Load more'
+                            size_hint: 1,.1
+                            on_press:
+                                root.load_more()
+                    
+<TagButton>:
+    btn: btn
+    chk: chk
+    size_hint_y: None
+    height: 35
+    Button:
+        id: btn
+        background_normal: ''
+        background_color: 0,0,0,0
+        on_press: root.check_tick(chk)
+
+    MDCheckbox:
+        id: chk
+        size_hint: None,None
+        height: 35
+        width: 35
+        on_active: root.root.tag_check(btn.text, self.active)
+        canvas.before:
+            Color:
+                rgba: 0,0,0,0
+            Rectangle:
+                pos: self.pos
+                size: self.size
+            
+<TagsList>:
+    
+    size_hint: None,None
+    height: 280
+    width: 150
+    canvas.before:
+        Color:
+            rgba: root.clr
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<FolderButton>:
+    folder_name: folder_name
+    size_hint_y: None
+    height: 50
+    Button:
+        id: folder_name
+        size_hint: .8,1
+        disabled: True
+        disabled_color: 1,1,1,1
+    MDIconButton:
+        icon: 'close'
+        on_press: root.delete()
+
+<FolderSelect>:
+    listed_folders: listed_folders
+    orientation: 'vertical'
+    ScrollView:
+        size_hint: 1,.75
+        StackLayout:
+            id: listed_folders
+            size_hint_y: None
+            height: self.minimum_height
+    BoxLayout:
+        orientation: 'vertical'
+        size: root.size
+        pos: root.pos
+        size_hint: 1,.2
+        padding: 0,0,0,25
+        MDIconButton:
+            disabled: True
+            pos_hint: {'center_x':.5}
+            icon: 'upload'
+            theme_text_color: 'Custom'
+            text_color: 1,1,1,1
+
+        MDLabel:
+            halign: 'center'
+            text: 'Drag and Drop Folder'
+            size_hint_y: None
+            height: 10
+            color: 1,1,1,1
+
+    Button:
+        size_hint: 1,.12
+        text: 'Close'
+        background_color: .5,.5,.5,1
+        on_press: root.close()
+
+<_DisplayImage>:
+    img: img
+    orientation: 'vertical'
+    pos_hint: {'center_y':.5,'center_x':.5}
+    size_hint: .8,.9
+    Image:
+        id: img
+
+    BoxLayout: 
+        padding: 400,0
+        size_hint_y: .1
+        pos_hint: {'center_x':.5}
+        MDIconButton:
+            icon: 'chevron-left'
+            theme_text_color: 'Custom'
+            text_color: 1,1,1,1
+            on_press: root.change('left')
+        MDIconButton:
+            icon: 'close'
+            theme_text_color: 'Custom'
+            text_color: 1,1,1,1
+            on_press: root.dismiss()
+        MDIconButton:
+            icon: 'chevron-right'
+            theme_text_color: 'Custom'
+            text_color: 1,1,1,1    
+            on_press: root.change('right')
+
+<ImageButton>:
+    size_hint: None,None
+    height: 120
+    width: 120
+    background_normal: ''
+    background_color: 0,0,0,0
+    disabled: True
+    canvas.before:
+        Color:
+            rgba: .8,.8,.8,1
+        Rectangle:
+            size:self.size
+            pos:self.pos
+            source: root.pic
+
+<FileLoader>:
+    canvas.before:
+        Color:
+            rgba: 0,0,0,.5
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    padding: 20,20
+    loaded_images: loaded_images
+    load_btn: load_btn
+    show_selected: show_selected
+    BoxLayout:
+        canvas.before:
+            Color:
+                rgba: 0,0,0,.4
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        size_hint: .5,1
+        orientation: 'vertical'
+        Image:
+            id: show_selected
+            size_hint: .98,.9
+        Button:
+            text: 'Add Image(s)'
+            size_hint: 1,.1
+            on_press:
+                root.add_image()
+    BoxLayout:
+        size_hint: .5,1
+        orientation: 'vertical'
+        
+        ScrollView:
+            id: file_scroll
+            size_hint: 1,.9
+            GridLayout:
+                id: loaded_images
+                col_default_width: 115
+                col_force_default: True
+                row_default_height: 115
+                row_force_default: True
+                cols: 5
+                rows: 0
+                size_hint_y: None
+                height: self.minimum_height #max(self.minimum_height, file_scroll.height)
+            
+        BoxLayout:
+            size_hint: 1,.1
+            Button:
+                id: load_btn
+                text: "Load More"
+                on_press: root._load_more()
+            Button:
+                text: "Close"
+                on_press: root.parent.dismiss()
+
+<SelectorImage>:
+    background_normal: ''
+    background_color: 0,.5,1,root.transp
+    size_hint: None, None
+    size: 110,110
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: root.thumb
+
+<SelectorBox>:
+
+    FloatLayout:
+        size: 50,50
+        pos: root.pos
+
+<CreateEntry>:
+    content: text_editor                    # big text field
+    img_box: img_box                            # image squares layout on the right 
+    entry_title: title
+    canvas.before:
+        Color:
+            rgba: root.paper_color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+    StackLayout:
+        add_image: add_image
+        BoxLayout:
+            padding: 20,20,20,20
+            id: top_bar
+            size_hint: 1,.13
+
+            TextInput:
+                id: title
+                hint_text: 'Name'
+                multiline: False
+                size_hint: .35, 1
+                background_color: root.paper_color
+            Button:
+                text: 'Tags'
+                size_hint: .1,1
+                on_press: root.show_tags(root, pos=[self.pos[0], self.pos[1]-280])
+            Button:
+                text: 'Select Folders'
+                size_hint: .13,1
+                on_press: root._pick_folders()
+            Button:
+                text: 'Save'
+                size_hint: .13,1
+                on_press: root.save()
+            Button:
+                size_hint: .13,1
+                text: 'Back'
+                on_press: 
+                    app.m.current = 'diary'
+
+        BoxLayout:
+            padding: 20,5,0,20
+            size_hint: 1,.85 
+            ScrollView:
+                size_hint: .875,1
+                id: scrlv
+                scroll_type: ['bars']
+                BoxLayout:
+                    id: box
+                    size_hint: 1, None
+                    height: max(self.minimum_height, scrlv.height)
+                    
+                    TextInput:
+                        id: text_editor
+                        size_hint: 1, None
+                        height: max(self.minimum_height, scrlv.height)
+                        markup: True
+                        # background_color: root.paper_color
+                        # source: root.im
+
+            ScrollView:
+                size_hint: .125,1
+                id: scroll_images
+                canvas.before:
+                    Color:
+                        rgba: .7,.7,.7,1
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                ImageBox:
+                    id: img_box
+                    padding: 14,14,10,14
+                    spacing: 10
+                    size_hint_y: None
+                    height: self.minimum_height
+                    MDIconButton:
+                        id: add_image
+                        size_hint: None,None
+                        height: 120
+                        width: 120
+                        icon: 'plus'
+                        on_press:
+                            root._add_img()
+                        canvas.before:
+                            Color:
+                                rgba: .8,.8,.8,1
+                            Rectangle:
+                                pos:self.pos
+                                size:self.size
+
+<EntryDisplayed>:
+    content: content
+    img_box: img_box
+
+    BoxLayout:
+        padding: 20,5,0,20
+        size_hint: 1,.85 
+        ScrollView:
+            size_hint: .875,1
+            id: scrlv
+            scroll_type: ['bars']
+            BoxLayout:
+                id: box
+                size_hint: 1, None
+                height: max(self.minimum_height, scrlv.height)
+                
+                TextInput:
+                    id: content
+                    size_hint: 1, None
+                    height: max(self.minimum_height, scrlv.height)
+                    markup: True
+                    disabled: True
+                    disabled_foreground_color: 0,0,0,1
+                    background_color: app.paper_color
+                    # source: root.im
+        ScrollView:
+            size_hint: .125,1
+            id: scroll_images
+ 
+            ImageBox:
+                id: img_box
+                padding: 14,0,10,14
+                spacing: 10
+                size_hint_y: None
+                height: self.minimum_height
+
+
+######################################################################################################################
+################################################# MILESTONES #########################################################
+######################################################################################################################
+
+<Milestones>:
+    main_container: main_container
+    in_progress_btn: in_progress_btn
+    archived_btn: archived_btn
+    milestones_list: milestones_list
+    BoxLayout:                                                          # main container
+        id: main_container
+        orientation: 'horizontal'
+        spacing: 5
+        padding: 5,0,0,0
+        SideNav:
+       
+        BoxLayout:                                                      # Milestones Layout
+            canvas.before:
+                Color:
+                    rgba: .7,.7,.7,1
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+
+            id: main_layout
+            size_hint: .85, 1
+            FloatLayout:                                                # float layout for main screen
+                size_hint: 1,1
+                BoxLayout:                                              # main layout
+                    canvas.before:
+                        Color:
+                            rgba: root.obj_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+
+                    orientation: 'vertical'
+                    size_hint: .96,None
+                    size: 950,600
+                    pos_hint: {'x':.02, 'y':.035}
+                    BoxLayout:
+                        orientation:'vertical'
+                        BoxLayout:
+                            # canvas.before:
+                            #     Color:
+                            #         rgba: .4,.4,.4,1
+                            #     Rectangle:
+                            #         size: self.size
+                            #         pos: self.pos
+
+                            id: top_bar
+                            size_hint: 1,.15
+                            Button:
+                                id: in_progress_btn
+                                text: 'In Progress'
+                                background_normal: ''
+                                on_press: 
+                                    root.load_milestones()
+                            Button:
+                                id: archived_btn
+                                text: 'Completed'
+                                background_normal: ''
+                                on_press:
+                                    root.load_archived()
+                        ScrollView:
+                            size_hint: 1, .85
+                            StackLayout:
+                                size_hint_y: None
+                                height: self.minimum_height
+                                id: milestones_list
+
+<Manager>:
+    id: screen_manager
+    scr_one: scr_one
+    diary: diary
+    milestones: milestones
+    create_entry: create_entry
+    ScreenOne:
+        id: scr_one
+        name: 'scr_one'
+        manager: screen_manager
+    Milestones:
+        id: milestones
+        name: 'milestones'
+        manager: screen_manager
+    CreateEntry:
+        id: create_entry
+        name: 'create_entry'
+        manager: screen_manager
+    Diary:
+        id: diary
+        name: 'diary'
+        manager: screen_manager
