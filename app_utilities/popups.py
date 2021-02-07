@@ -374,6 +374,9 @@ class ViewEntry(ShowImage):
             self.add_new_slot(pics[img], thumbs[img])
 
     def _get_entry_infos(self, entry):
+        from .my_paths import get_diary
+        global DIARY
+        DIARY = get_diary()
         infos = {}
         infos['title'] = DIARY[entry]['title'][:-4]
         infos['date_created'] = DIARY[entry]['date_created']

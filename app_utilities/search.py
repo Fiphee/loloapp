@@ -24,7 +24,13 @@ class EntrySearch():
         self.tags = tags
         self.query = query
         
+        
     def get_entry_list(self, queries):
+        from .my_paths import get_diary, get_profile
+        global DIARY
+        DIARY = get_diary()
+        global PROFILE
+        PROFILE = get_profile()
         length = len(self.tags)
         if queries.count('') == 3:
             if length == 0:

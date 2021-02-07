@@ -742,6 +742,9 @@ class DiaryEntry(BoxLayout):
         self.MANAGER.current = 'edit_page'
 
     def delete(self):
+        from .my_paths import get_diary
+        global DIARY
+        DIARY = get_diary()
         lay = BoxLayout(orientation='vertical',spacing=15)
         btns = BoxLayout()
         cancel = Button(text='Cancel')

@@ -20,6 +20,8 @@ from PIL import Image as pil_img
 from kivymd.uix.snackbar import Snackbar
 from kivy.uix.popup import Popup
 
+global DIARY
+
 class SideNav(StackLayout):
     pass
 
@@ -267,10 +269,16 @@ class CreateEntry(Screen):
         self.tag_list = set()
         self.pics = {}
         self.currently_shown = None
+        self.old_tags = []
         
     def on_leave(self):
         shutil.rmtree(TEST_FOLDER)
         self.MANAGER.remove_widget(self)
+        from .my_paths import get_profile, get_diary
+        global DIARY
+        DIARY = get_diary()
+        global PROFILE
+        PROFILE = get_profile()
         if not self.edit:
             self.MANAGER.add_widget(CreateEntry(name='create_entry', manager=self.MANAGER))
         del(self)
@@ -281,6 +289,7 @@ class CreateEntry(Screen):
             os.mkdir(TEST_FOLDER)
             os.mkdir(TEST_IMAGES)
             os.mkdir(TEST_THUMBS)
+
         if self.edit:
             self.load_entry_details()
 
@@ -296,10 +305,13 @@ class CreateEntry(Screen):
             for character in txt:
                 text += character
         self.content.text = text
+
+        self.old_tags = []
         tags = ["lifestyle", "health", "family", "friends", "love", "work", "recipes"]
         for tag in tags:
             if DIARY[entry][tag] == 1:
                 self.tag_check(tag.capitalize(), True)
+                self.old_tags.append(tag)
         for img in range(0,len(pics)):
             self.add_new_slot(pics[img], thumbs[img])
 
@@ -373,6 +385,18 @@ class CreateEntry(Screen):
             DIARY[entry_n][tag.lower()] = 1
             if not self.edit:
                 DIARY['init'][tag.lower()].append(entry_n)
+            else:
+                if tag.lower() in self.old_tags:
+                    self.old_tags.remove(tag.lower())
+                    continue
+                taglist = DIARY['init'][tag.lower()]
+                if len(taglist) == 0:
+                    DIARY['init'][tag.lower()].append(int(entry_n))
+                else:
+                    DIARY['init'][tag.lower()] = self._insert_entry_in_taglist(taglist, entry_n)
+        for tag in self.old_tags:
+            DIARY['init'][tag.lower()].remove(int(entry_n))
+            DIARY[entry_n][tag.lower()] = 0
 
         DIARY[entry_n] = DIARY[entry_n]
 
@@ -382,11 +406,57 @@ class CreateEntry(Screen):
         PROFILE['init'] = PROFILE['init']
         DIARY['init'] = DIARY['init']
         Snackbar(text='Entry Successfully saved!').show()
+        self.MANAGER.current = 'diary'
 
     def delete_unused_images(self, old, new):
         for img in old:
             if img not in new:
                 os.remove(img)
+
+    def _insert_entry_in_taglist(self, tag, n):
+        n = int(n)
+        my_list = tag[:]
+        L = 0
+        R = len(my_list) - 1
+        if n < my_list[L]:
+            my_list.insert(L, n)
+            return my_list
+        elif n > my_list[R]:
+            my_list.append(n)
+            return my_list
+
+        found_spot = False
+        while not found_spot:
+            mid = L + (R-L)// 2
+            left = mid - 1
+            right = mid + 1
+            if my_list[mid] > n:
+                if my_list[left] < n:
+                    my_list.insert(mid, n)
+                    found_spot = True
+                    return my_list
+                R = mid
+            elif my_list[mid] < n:
+                if my_list[right] > n:
+                    my_list.insert(right, n) 
+                    found_spot = True                   
+                    return my_list
+                L = mid
+        
+    def _check_in(self, tag, entry_n):
+        L = 0 
+        R = len(tag)-1
+        while L <= R:
+            mid = L + (R-L)//2
+            if tag[mid] == entry_n:
+                return mid
+            elif tag[mid] < entry_n:
+                L = mid + 1
+            elif tag[mid] > entry_n:
+                R = mid - 1
+        else:
+            return -1
+
 
     def do(self):
         print('doy')
@@ -453,6 +523,11 @@ class Diary(Screen):
         Window.bind(on_key_down=self._on_keyboard_down)
 
     def on_enter(self):
+        from .my_paths import get_diary, get_profile
+        global DIARY
+        DIARY = get_diary()
+        global PROFILE
+        PROFILE = get_profile()
         self.diary_list.clear_widgets()
         self.currently_loaded = DIARY['init']['total']
         self.search_list = DIARY

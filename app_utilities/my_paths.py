@@ -20,11 +20,24 @@ DAILY = JsonStore(join(app_folder, 'daily.json'))
 OBJECTIVES = JsonStore(join(app_folder, 'objectives.json'))
 HABITS = JsonStore(join(app_folder, 'habits.json'))
 MILESTONES = JsonStore(join(app_folder, 'milestones.json'))
-PROFILE = JsonStore(join(app_folder, 'profile.json'))
+# PROFILE = JsonStore(join(app_folder, 'profile.json'))
 ARCHIVE = JsonStore(join(app_folder, 'archive.json'))
-DIARY = JsonStore(join(app_folder, 'diary.json'))
+# DIARY = JsonStore(join(app_folder, 'diary.json'))
 ENTRIES_FOLDER = join(app_folder, "entries")
 TEMP = join(app_folder, 'temp')
 TEST_FOLDER = join(ENTRIES_FOLDER, 'current')
 TEST_IMAGES = join(TEST_FOLDER, 'images')
 TEST_THUMBS = join(TEST_IMAGES, 'thumbs')
+
+def get_diary():
+    global DIARY
+    DIARY = JsonStore(join(app_folder, 'diary.json'))
+    return DIARY
+
+def get_profile():
+    global PROFILE
+    PROFILE = JsonStore(join(app_folder, 'profile.json'))
+    return PROFILE
+
+get_diary()
+get_profile()
